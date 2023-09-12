@@ -3,6 +3,10 @@ edition = "2021"
 name = "rp2040-project-template"
 version = "0.1.0"
 license = "MIT OR Apache-2.0"
+authors = ["Akiyuki Okayasu <akiyuki.okayasu@gmail.com>"]
+repository = "https://github.com/AkiyukiOkayasu/rp2040-ultrasonic-communication"
+readme = "README.md"
+rust-version = "1.72.0"
 
 [dependencies]
 cortex-m = "0.7"
@@ -14,14 +18,20 @@ defmt-rtt = "0.4"
 panic-probe = { version = "0.3", features = ["print-defmt"] }
 
 # We're using a Pico by default on this template
-rp-pico = "0.8"
+rp-pico = { version = "0.8.0", default-features = false, features = ["rt", "critical-section-impl", "rom-func-cache"] }
+fugit = "0.3.7"
+fixed = "1.23.1"
+pio = "0.2.1"
+pio-proc = "0.2.2"
+heapless = "0.7.16"
+cic-fixed = { git = "https://github.com/AkiyukiOkayasu/cic-fixed", branch = "main" }
 
 # but you can use any BSP. Uncomment this to use the pro_micro_rp2040 BSP instead
-# sparkfun-pro-micro-rp2040 = "0.7"
+# sparkfun-pro-micro-rp2040 = "0.3"
 
 # If you're not going to use a Board Support Package you'll need these:
-# rp2040-hal = { version="0.9", features=["rt", "critical-section-impl"] }
-# rp2040-boot2 = "0.3"
+# rp2040-hal = { version="0.8", features=["rt", "critical-section-impl"] }
+rp2040-boot2 = "0.2.1"
 
 # cargo build/run
 [profile.dev]

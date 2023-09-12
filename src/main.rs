@@ -251,7 +251,7 @@ fn main() -> ! {
 
     //Goertzelフィルターの初期化
     let mut goertzel = Goertzel::new();
-    goertzel.initialize(SAMPLE_RATE.raw(), 1000.0f32, 128);
+    goertzel.initialize(SAMPLE_RATE.raw(), 1500.0f32, 128);
 
     //PDMのPIOスタート
     sm2.start();

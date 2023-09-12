@@ -269,8 +269,8 @@ fn main() -> ! {
         if !l_pdm_queue.is_empty() {
             let sample = l_pdm_queue.dequeue().unwrap();
             let sample = sample.to_bits().saturating_mul(GAIN); //ゲイン調整
-            let sample = sample as f32 / f32::MAX; //[-1.0, 1.0]
-            if let Some(magnitude) = goertzel.add_sample(&sample) {
+            let input = sample as f32 / i32::MAX as f32; //[-1.0, 1.0]
+            if let Some(magnitude) = goertzel.add_sample(&input) {
                 info!("magnitude: {=f32}", magnitude);
             }
         }

@@ -15,6 +15,7 @@ use defmt_rtt as _;
 use embedded_hal::digital::v2::OutputPin;
 use fixed::types::I1F31;
 use fugit::HertzU32;
+use goertzel_algorithm::Goertzel;
 use heapless::spsc::Queue;
 use panic_probe as _;
 use pio_proc::pio_file;
@@ -255,18 +256,23 @@ fn main() -> ! {
         }
     }
 
+    //Goertzelフィルターの初期化
+    let mut goertzel = Goertzel::new();
+    goertzel.initialize(SAMPLE_RATE.raw(), 1000.0f32, 128);
+
     //PDMのPIOスタート
     sm2.start();
     delay.delay_ms(1000);
     pdm_pio_jump_pin.set_low().unwrap(); //PDM用PIOの起動直後はJUMP PINをHighにしてPDM clockを1.536MHzにし、1秒くらい経ったらLowにして3.072MHzにしてUltrasonic modeにする
 
     loop {
-        while !l_pdm_queue.is_empty() {
-            info!("hoge");
+        if !l_pdm_queue.is_empty() {
             let sample = l_pdm_queue.dequeue().unwrap();
-            let sample = sample.to_bits().saturating_mul(GAIN);
-            //信号処理はここでする
-            info!("sample: {=i32}", sample);
+            let sample = sample.to_bits().saturating_mul(GAIN); //ゲイン調整
+            let sample = sample as f32 / f32::MAX; //[-1.0, 1.0]
+            if let Some(magnitude) = goertzel.add_sample(&sample) {
+                info!("magnitude: {=f32}", magnitude);
+            }
         }
 
         if pdm_rx_transfer.is_done() {

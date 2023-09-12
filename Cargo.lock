@@ -404,6 +404,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "goertzel_algorithm"
+version = "0.1.0"
+source = "git+https://github.com/AkiyukiOkayasu/goertzel_algorithm?branch=main#61f16bbfa76bb31b486163a9f209969c056cd6b4"
+dependencies = [
+ "libm",
+]
+
+[[package]]
 name = "half"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -513,6 +521,12 @@ name = "libc"
 version = "0.2.147"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b4668fb0ea861c1df094127ac5f1da3409a82116a4ba74fca2e58ef927159bb3"
+
+[[package]]
+name = "libm"
+version = "0.2.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f7012b1bbb0719e1097c47611d3898568c546d597c2e74d66f6087edd5233ff4"
 
 [[package]]
 name = "linux-raw-sys"
@@ -886,6 +900,7 @@ dependencies = [
  "embedded-hal",
  "fixed",
  "fugit",
+ "goertzel_algorithm",
  "heapless",
  "panic-probe",
  "pio",

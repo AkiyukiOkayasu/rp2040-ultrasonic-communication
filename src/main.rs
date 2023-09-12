@@ -206,7 +206,7 @@ fn main() -> ! {
     //=============================PIO===============================
     let pio_pdm = pio_file!(
         "./src/pdm.pio",
-        select_program("pdm_stereo_SPH0641LU4H_ultrasonic_mode")
+        select_program("pdm_mono_SPH0641LU4H_ultrasonic_mode")
     )
     .program;
 

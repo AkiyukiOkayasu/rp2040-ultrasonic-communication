@@ -62,7 +62,7 @@ const PDM_PIO_CLOCKDIV_INT: u16 = (RP2040_CLOCK_HZ.raw() / PDM_PIO_CLOCK_HZ.raw(
 const PDM_PIO_CLOCKDIV_FRAC: u8 = 0u8;
 
 /// バッファーサイズ（サンプル）
-const BUFFER_SIZE: usize = 32;
+const BUFFER_SIZE: usize = 128;
 const PDM_QUEUE_SIZE: usize = BUFFER_SIZE * 4;
 
 const CIC_DECIMATION_FACTOR: usize = (PDM_CLOCK_HZ.raw() / SAMPLE_RATE.raw()) as usize; //CICフィルターのデシメーションファクター
@@ -234,8 +234,8 @@ fn main() -> ! {
     //=============================DMA===============================
     let dma_channels = pac.DMA.split(&mut pac.RESETS);
     // PDM用DMA設定
-    let pdm_rx_buf1 = singleton!(: [u32; BUFFER_SIZE*4] = [0; BUFFER_SIZE*4]).unwrap(); //staticなバッファーを作る
-    let pdm_rx_buf2 = singleton!(: [u32; BUFFER_SIZE*4] = [0; BUFFER_SIZE*4]).unwrap(); //staticなバッファーを作る
+    let pdm_rx_buf1 = singleton!(: [u32; BUFFER_SIZE] = [0; BUFFER_SIZE]).unwrap(); //staticなバッファーを作る
+    let pdm_rx_buf2 = singleton!(: [u32; BUFFER_SIZE] = [0; BUFFER_SIZE]).unwrap(); //staticなバッファーを作る
     let pdm_dma_config =
         double_buffer::Config::new((dma_channels.ch2, dma_channels.ch3), rx2, pdm_rx_buf1);
     let pdm_rx_transfer = pdm_dma_config.start(); //転送開始

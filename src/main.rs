@@ -71,6 +71,9 @@ const CIC_DECIMATION_FACTOR: usize = (PDM_CLOCK_HZ.raw() / SAMPLE_RATE.raw()) as
 // const GAIN: i32 = 2i32.pow(13);
 const GAIN: i32 = 2i32.pow(16); //13bitのままだと音が小さいので16bitにしてみる
 
+/// Goertzelフィルターのブロックサイズ（サンプル）
+const GOERTZEL_BLOCK_SIZE: u32 = 128;
+
 #[entry]
 fn main() -> ! {
     info!("Program start");
@@ -251,7 +254,7 @@ fn main() -> ! {
 
     //Goertzelフィルターの初期化
     let mut goertzel = Goertzel::new();
-    goertzel.initialize(SAMPLE_RATE.raw(), 1500.0f32, 128);
+    goertzel.initialize(SAMPLE_RATE.raw(), 1500.0f32, GOERTZEL_BLOCK_SIZE);
 
     //PDMのPIOスタート
     sm2.start();

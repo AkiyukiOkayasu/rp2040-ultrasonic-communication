@@ -249,13 +249,6 @@ fn main() -> ! {
     info!("Bit growth of CIC: {}bits", bit_growth);
     info!("Output bits of CIC: {}bits", output_bits);
 
-    //PDM QueueをBUFFER_SIZE分だけ0埋めして初期化
-    {
-        for _ in 0..BUFFER_SIZE * 2 {
-            l_pdm_queue.enqueue(I1F31::ZERO).unwrap();
-        }
-    }
-
     //Goertzelフィルターの初期化
     let mut goertzel = Goertzel::new();
     goertzel.initialize(SAMPLE_RATE.raw(), 1000.0f32, 128);

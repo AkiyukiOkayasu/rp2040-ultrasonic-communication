@@ -74,6 +74,11 @@ const GAIN: i32 = 2i32.pow(16); //13bitのままだと音が小さいので16bit
 /// Goertzelフィルターのブロックサイズ（サンプル）
 const GOERTZEL_BLOCK_SIZE: u32 = 128;
 
+const GOERTZEL_NUM_TARGET_FREQUENCYS: usize = 5;
+const GOERTZEL_TARGET_FREQUENCYS: [f32; GOERTZEL_NUM_TARGET_FREQUENCYS] = [
+    24375f32, 24750f32, 25125f32, 25500f32, 30000f32, //30375f32, 30750f32, 31125f32,
+];
+
 #[entry]
 fn main() -> ! {
     info!("Program start");
@@ -253,8 +258,14 @@ fn main() -> ! {
     info!("Output bits of CIC: {}bits", output_bits);
 
     //Goertzelフィルターの初期化
-    let mut goertzel = Goertzel::new();
-    goertzel.initialize(SAMPLE_RATE.raw(), 1500.0f32, GOERTZEL_BLOCK_SIZE);
+    let mut goertzel: [Goertzel; GOERTZEL_NUM_TARGET_FREQUENCYS] = Default::default();
+    for i in 0..GOERTZEL_NUM_TARGET_FREQUENCYS {
+        goertzel[i].initialize(
+            SAMPLE_RATE.raw(),
+            GOERTZEL_TARGET_FREQUENCYS[i],
+            GOERTZEL_BLOCK_SIZE,
+        );
+    }
 
     //PDMのPIOスタート
     sm2.start();
@@ -266,8 +277,11 @@ fn main() -> ! {
             let sample = l_pdm_queue.dequeue().unwrap();
             let sample = sample.to_bits().saturating_mul(GAIN); //ゲイン調整
             let input = sample as f32 / i32::MAX as f32; //[-1.0, 1.0]
-            if let Some(magnitude) = goertzel.add_sample(&input) {
-                info!("magnitude: {=f32}", magnitude);
+            for g in goertzel.iter_mut() {
+                if let Some(magnitude) = g.add_sample(&input) {
+                    let db = gain_to_decibel(&magnitude) as i8;
+                    // info!("dB: {=i8}", db);
+                }
             }
         }
 

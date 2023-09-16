@@ -297,3 +297,13 @@ fn main() -> ! {
 const fn bit_bang(v: u32, index: u8) -> bool {
     v & (1 << index) > 0
 }
+
+/// atodb
+#[inline]
+fn gain_to_decibel(gain: &f32) -> f32 {
+    if *gain > 0.00001f32 {
+        20.0f32 * libm::log10f(*gain)
+    } else {
+        -100.0f32
+    }
+}

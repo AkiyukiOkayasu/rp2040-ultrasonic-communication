@@ -280,7 +280,7 @@ fn main() -> ! {
             for g in goertzel.iter_mut() {
                 if let Some(magnitude) = g.add_sample(&input) {
                     let db = gain_to_decibel(&magnitude) as i8;
-                    // info!("dB: {=i8}", db);
+                    info!("dB: {=i8}", db);
                 }
             }
         }

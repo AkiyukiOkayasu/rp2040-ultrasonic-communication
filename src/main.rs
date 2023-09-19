@@ -12,7 +12,7 @@ use cic_fixed::CicDecimationFilter;
 use cortex_m::singleton;
 use defmt::*;
 use defmt_rtt as _;
-use embedded_hal::digital::v2::OutputPin;
+use embedded_hal::digital::v2::{OutputPin, PinState};
 use fixed::types::I1F31;
 use fugit::HertzU32;
 use goertzel_algorithm::Goertzel;
@@ -195,7 +195,6 @@ fn main() -> ! {
     }
 
     let mut delay = cortex_m::delay::Delay::new(core.SYST, clocks.system_clock.freq().to_Hz());
-    delay.delay_ms(100); // PDMマイクのパワーアップシーケンスに50ms程度必要
 
     //=============================GPIO===============================
     let pins = bsp::hal::gpio::Pins::new(
@@ -206,9 +205,13 @@ fn main() -> ! {
     );
 
     // configure GPIO for PIO0.
-    let pdm_input_pin = pins.gpio12.into_function::<FunctionPio0>();
-    let pdm_clock_output_pin = pins.gpio13.into_function::<FunctionPio0>();
-    let mut pdm_pio_jump_pin = pins.gpio14.into_push_pull_output();
+    let mut pdm_power_pin = pins.gpio13.into_push_pull_output_in_state(PinState::Low);
+    let pdm_input_pin = pins.gpio15.into_function::<FunctionPio0>();
+    let pdm_clock_output_pin = pins.gpio14.into_function::<FunctionPio0>();
+    let mut pdm_pio_jump_pin = pins.gpio16.into_push_pull_output();
+    delay.delay_ms(1);
+    pdm_power_pin.set_high().unwrap();
+    delay.delay_ms(100); // PDMマイクのパワーアップシーケンスに50ms程度必要
     pdm_pio_jump_pin.set_high().unwrap(); //PDM用PIOの起動直後はJUMP PINをHighにしてPDM clockを1.536MHzにし、1秒くらい経ったらLowにして3.072MHzにしてUltrasonic modeにする
 
     //=============================PIO===============================

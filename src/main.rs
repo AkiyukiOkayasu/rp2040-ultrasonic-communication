@@ -295,7 +295,7 @@ fn main() -> ! {
                 //上位ビットから順に処理する
                 for i in (0..32).rev() {
                     let cic_input_value: i32 = if bit_bang(*e, i) { 1i32 } else { -1i32 }; //PDMの1bitを-1 or 1に変換
-                    if let Some(v) = l_cic.filter(cic_input_value) {
+                    if let Some(v) = l_cic.process_sample(&cic_input_value) {
                         l_pdm_queue.enqueue(I1F31::from_bits(v)).unwrap();
                     }
                 }

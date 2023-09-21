@@ -15,7 +15,7 @@ use defmt_rtt as _;
 use embedded_hal::digital::v2::{OutputPin, PinState};
 use fixed::types::I1F31;
 use fugit::HertzU32;
-use goertzel_algorithm::Goertzel;
+use goertzel_algorithm::OptimizedGoertzel;
 use heapless::spsc::Queue;
 use panic_probe as _;
 use pio_proc::pio_file;
@@ -261,9 +261,9 @@ fn main() -> ! {
     info!("Output bits of CIC: {}bits", output_bits);
 
     //Goertzelフィルターの初期化
-    let mut goertzel: [Goertzel; GOERTZEL_NUM_TARGET_FREQUENCYS] = Default::default();
+    let mut goertzel: [OptimizedGoertzel; GOERTZEL_NUM_TARGET_FREQUENCYS] = Default::default();
     for i in 0..GOERTZEL_NUM_TARGET_FREQUENCYS {
-        goertzel[i].initialize(
+        goertzel[i].prepare(
             SAMPLE_RATE.raw(),
             GOERTZEL_TARGET_FREQUENCYS[i],
             GOERTZEL_BLOCK_SIZE,
@@ -281,7 +281,7 @@ fn main() -> ! {
             let sample = sample.to_bits().saturating_mul(GAIN); //ゲイン調整
             let input = sample as f32 / i32::MAX as f32; //[-1.0, 1.0]
             for g in goertzel.iter_mut() {
-                if let Some(magnitude) = g.add_sample(&input) {
+                if let Some(magnitude) = g.process_sample(&input) {
                     let db = gain_to_decibel(&magnitude) as i8;
                     info!("dB: {=i8}", db);
                 }

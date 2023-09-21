@@ -297,14 +297,23 @@ fn main() -> ! {
                         if ultrasonic_detected[0]
                             && ultrasonic_detected[1]
                             && ultrasonic_detected[2]
+                            && !ultrasonic_detected[3]
                         {
-                            info!("Ultrasonic detected. case 1")
-                        }
-                        if ultrasonic_detected[0]
+                            info!("case 1");
+                        } else if ultrasonic_detected[0]
                             && ultrasonic_detected[1]
+                            && !ultrasonic_detected[2]
                             && ultrasonic_detected[3]
                         {
-                            info!("Ultrasonic detected. case 2")
+                            info!("case 2");
+                        } else if ultrasonic_detected[0]
+                            && ultrasonic_detected[1]
+                            && ultrasonic_detected[2]
+                            && ultrasonic_detected[3]
+                        {
+                            info!("impulse");
+                        } else {
+                            info!("not detected");
                         }
                     }
                 }

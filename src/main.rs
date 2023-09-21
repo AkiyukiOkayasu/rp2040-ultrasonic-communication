@@ -88,7 +88,7 @@ fn main() -> ! {
     info!("CIC_DECIMATION_FACTOR: {=usize}", CIC_DECIMATION_FACTOR);
     info!("PDM_PIO_CLOCKDIV_INT: {=u16}", PDM_PIO_CLOCKDIV_INT);
 
-    let ultrasonic_threshold = decibel_to_gain(&-50.0f32); //超音波の閾値
+    let ultrasonic_threshold = decibel_to_gain(&-40.0f32); //超音波の閾値
     info!("ultrasonic_threshold: {=f32}", ultrasonic_threshold);
     let mut ultrasonic_detected: [bool; GOERTZEL_NUM_TARGET_FREQUENCYS] =
         [false; GOERTZEL_NUM_TARGET_FREQUENCYS];

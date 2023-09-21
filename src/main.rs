@@ -72,7 +72,7 @@ const CIC_DECIMATION_FACTOR: usize = (PDM_CLOCK_HZ.raw() / SAMPLE_RATE.raw()) as
 const GAIN: i32 = 2i32.pow(16); //13bitのままだと音が小さいので16bitにしてみる
 
 /// Goertzelフィルターのブロックサイズ（サンプル）
-const GOERTZEL_BLOCK_SIZE: u32 = 128;
+const GOERTZEL_BLOCK_SIZE: u32 = 256;
 
 const GOERTZEL_NUM_TARGET_FREQUENCYS: usize = 4;
 const GOERTZEL_TARGET_FREQUENCYS: [f32; GOERTZEL_NUM_TARGET_FREQUENCYS] = [

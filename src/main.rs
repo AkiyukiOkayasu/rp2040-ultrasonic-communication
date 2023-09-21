@@ -316,6 +316,7 @@ const fn bit_bang(v: u32, index: u8) -> bool {
 }
 
 /// atodb
+#[allow(dead_code)]
 #[inline]
 fn gain_to_decibel(gain: &f32) -> f32 {
     if *gain > 0.00001f32 {
@@ -326,6 +327,7 @@ fn gain_to_decibel(gain: &f32) -> f32 {
 }
 
 /// dbtoa
+#[allow(dead_code)]
 #[inline]
 fn decibel_to_gain(decibel: &f32) -> f32 {
     if *decibel > -100.0f32 {

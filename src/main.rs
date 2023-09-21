@@ -72,7 +72,7 @@ const CIC_DECIMATION_FACTOR: usize = (PDM_CLOCK_HZ.raw() / SAMPLE_RATE.raw()) as
 const GAIN: i32 = 2i32.pow(16); //13bitのままだと音が小さいので16bitにしてみる
 
 /// Goertzelフィルターのブロックサイズ（サンプル）
-const GOERTZEL_BLOCK_SIZE: u32 = 256;
+const GOERTZEL_BLOCK_SIZE: u32 = 512;
 
 const GOERTZEL_NUM_TARGET_FREQUENCYS: usize = 4;
 const GOERTZEL_TARGET_FREQUENCYS: [f32; GOERTZEL_NUM_TARGET_FREQUENCYS] = [
@@ -87,6 +87,11 @@ fn main() -> ! {
     info!("PDM_CLOCK_RATE: {=u32}", PDM_CLOCK_HZ.raw());
     info!("CIC_DECIMATION_FACTOR: {=usize}", CIC_DECIMATION_FACTOR);
     info!("PDM_PIO_CLOCKDIV_INT: {=u16}", PDM_PIO_CLOCKDIV_INT);
+
+    let ultrasonic_threshold = decibel_to_gain(&-50.0f32); //超音波の閾値
+    info!("ultrasonic_threshold: {=f32}", ultrasonic_threshold);
+    let mut ultrasonic_detected: [bool; GOERTZEL_NUM_TARGET_FREQUENCYS] =
+        [false; GOERTZEL_NUM_TARGET_FREQUENCYS];
 
     let mut pac = pac::Peripherals::take().unwrap();
     let core = pac::CorePeripherals::take().unwrap();
@@ -280,10 +285,24 @@ fn main() -> ! {
             let sample = l_pdm_queue.dequeue().unwrap();
             let sample = sample.to_bits().saturating_mul(GAIN); //ゲイン調整
             let input = sample as f32 / i32::MAX as f32; //[-1.0, 1.0]
-            for g in goertzel.iter_mut() {
+            for (i, g) in goertzel.iter_mut().enumerate() {
                 if let Some(magnitude) = g.process_sample(&input) {
-                    let db = gain_to_decibel(&magnitude) as i8;
-                    info!("dB: {=i8}", db);
+                    ultrasonic_detected[i] = magnitude > ultrasonic_threshold;
+
+                    if i == GOERTZEL_NUM_TARGET_FREQUENCYS - 1 {
+                        if ultrasonic_detected[0]
+                            && ultrasonic_detected[1]
+                            && ultrasonic_detected[2]
+                        {
+                            info!("Ultrasonic detected. case 1")
+                        }
+                        if ultrasonic_detected[0]
+                            && ultrasonic_detected[1]
+                            && ultrasonic_detected[3]
+                        {
+                            info!("Ultrasonic detected. case 2")
+                        }
+                    }
                 }
             }
         }

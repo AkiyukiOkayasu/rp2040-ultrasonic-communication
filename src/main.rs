@@ -324,3 +324,13 @@ fn gain_to_decibel(gain: &f32) -> f32 {
         -100.0f32
     }
 }
+
+/// dbtoa
+#[inline]
+fn decibel_to_gain(decibel: &f32) -> f32 {
+    if *decibel > -100.0f32 {
+        libm::powf(10.0f32, *decibel * 0.05f32)
+    } else {
+        0.0f32
+    }
+}

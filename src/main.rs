@@ -214,6 +214,9 @@ fn main() -> ! {
     let pdm_input_pin = pins.gpio15.into_function::<FunctionPio0>();
     let pdm_clock_output_pin = pins.gpio14.into_function::<FunctionPio0>();
     let mut pdm_pio_jump_pin = pins.gpio16.into_push_pull_output();
+    // LED GPIO
+    let mut user_led1_pin = pins.gpio28.into_push_pull_output_in_state(PinState::Low);
+    let mut user_led2_pin = pins.gpio27.into_push_pull_output_in_state(PinState::Low);
     delay.delay_ms(1);
     pdm_power_pin.set_high().unwrap();
     delay.delay_ms(100); // PDMマイクのパワーアップシーケンスに50ms程度必要
@@ -289,9 +292,9 @@ fn main() -> ! {
                 if let Some(magnitude) = g.process_sample(&input) {
                     ultrasonic_detected[i] = magnitude > ultrasonic_threshold;
 
-                    if i == 0 {
-                        info!("{} dB", gain_to_decibel(&magnitude));
-                    }
+                    // if i == 0 {
+                    //     info!("{} dB", gain_to_decibel(&magnitude));
+                    // }
 
                     if i == GOERTZEL_NUM_TARGET_FREQUENCYS - 1 {
                         if ultrasonic_detected[0]
@@ -299,21 +302,29 @@ fn main() -> ! {
                             && ultrasonic_detected[2]
                             && !ultrasonic_detected[3]
                         {
-                            info!("case 1");
+                            // info!("case 1");
+                            user_led1_pin.set_high().unwrap();
+                            user_led2_pin.set_low().unwrap();
                         } else if ultrasonic_detected[0]
                             && ultrasonic_detected[1]
                             && !ultrasonic_detected[2]
                             && ultrasonic_detected[3]
                         {
-                            info!("case 2");
+                            // info!("case 2");
+                            user_led1_pin.set_low().unwrap();
+                            user_led2_pin.set_high().unwrap();
                         } else if ultrasonic_detected[0]
                             && ultrasonic_detected[1]
                             && ultrasonic_detected[2]
                             && ultrasonic_detected[3]
                         {
-                            info!("impulse");
+                            // info!("impulse");
+                            user_led1_pin.set_low().unwrap();
+                            user_led2_pin.set_low().unwrap();
                         } else {
-                            info!("not detected");
+                            // info!("not detected");
+                            user_led1_pin.set_low().unwrap();
+                            user_led2_pin.set_low().unwrap();
                         }
                     }
                 }

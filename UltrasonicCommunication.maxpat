@@ -76,7 +76,7 @@
 					"patching_rect" : [ 240.0, 12.0, 132.0, 72.0 ],
 					"saved_attribute_attributes" : 					{
 						"valueof" : 						{
-							"parameter_enum" : [ "19200", "20000" ],
+							"parameter_enum" : [ "24200", "26000" ],
 							"parameter_longname" : "live.tab",
 							"parameter_mmax" : 1,
 							"parameter_shortname" : "live.tab",
@@ -162,7 +162,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 132.0, 36.0, 45.0, 22.0 ],
-					"text" : "19100"
+					"text" : "24100"
 				}
 
 			}
@@ -174,7 +174,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.0, 36.0, 45.0, 22.0 ],
-					"text" : "19000"
+					"text" : "24000"
 				}
 
 			}

@@ -72,11 +72,11 @@ const CIC_DECIMATION_FACTOR: usize = (PDM_CLOCK_HZ.raw() / SAMPLE_RATE.raw()) as
 const GAIN: i32 = 2i32.pow(16); //13bitのままだと音が小さいので16bitにしてみる
 
 /// Goertzelフィルターのブロックサイズ（サンプル）
-const GOERTZEL_BLOCK_SIZE: u32 = 3840;
+const GOERTZEL_BLOCK_SIZE: u32 = 19200;
 
 const GOERTZEL_NUM_TARGET_FREQUENCYS: usize = 4;
 const GOERTZEL_TARGET_FREQUENCYS: [f32; GOERTZEL_NUM_TARGET_FREQUENCYS] = [
-    19000f32, 19100f32, 19200f32, 19300f32, //30000f32, //30375f32, 30750f32, 31125f32,
+    19000f32, 19100f32, 19200f32, 20000f32, //30000f32, //30375f32, 30750f32, 31125f32,
 ];
 
 #[entry]
@@ -88,7 +88,7 @@ fn main() -> ! {
     info!("CIC_DECIMATION_FACTOR: {=usize}", CIC_DECIMATION_FACTOR);
     info!("PDM_PIO_CLOCKDIV_INT: {=u16}", PDM_PIO_CLOCKDIV_INT);
 
-    let ultrasonic_threshold = decibel_to_gain(&-40.0f32); //超音波の閾値
+    let ultrasonic_threshold = decibel_to_gain(&-60.0f32); //超音波の閾値
     info!("ultrasonic_threshold: {=f32}", ultrasonic_threshold);
     let mut ultrasonic_detected: [bool; GOERTZEL_NUM_TARGET_FREQUENCYS] =
         [false; GOERTZEL_NUM_TARGET_FREQUENCYS];

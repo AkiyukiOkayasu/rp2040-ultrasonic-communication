@@ -319,8 +319,8 @@ fn main() -> ! {
                             && ultrasonic_detected[3]
                         {
                             info!("impulse");
-                            user_led1_pin.set_low().unwrap();
-                            user_led2_pin.set_low().unwrap();
+                            user_led1_pin.set_high().unwrap();
+                            user_led2_pin.set_high().unwrap();
                         } else {
                             info!("not detected");
                             user_led1_pin.set_low().unwrap();

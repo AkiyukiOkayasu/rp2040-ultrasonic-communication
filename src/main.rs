@@ -209,14 +209,15 @@ fn main() -> ! {
         &mut pac.RESETS,
     );
 
+    // LED GPIO
+    let mut user_led1_pin = pins.gpio28.into_push_pull_output_in_state(PinState::Low);
+    let mut user_led2_pin = pins.gpio27.into_push_pull_output_in_state(PinState::Low);
+
     // configure GPIO for PIO0.
     let mut pdm_power_pin = pins.gpio13.into_push_pull_output_in_state(PinState::Low);
     let pdm_input_pin = pins.gpio15.into_function::<FunctionPio0>();
     let pdm_clock_output_pin = pins.gpio14.into_function::<FunctionPio0>();
     let mut pdm_pio_jump_pin = pins.gpio16.into_push_pull_output();
-    // LED GPIO
-    let mut user_led1_pin = pins.gpio28.into_push_pull_output_in_state(PinState::Low);
-    let mut user_led2_pin = pins.gpio27.into_push_pull_output_in_state(PinState::Low);
     delay.delay_ms(1);
     pdm_power_pin.set_high().unwrap();
     delay.delay_ms(100); // PDMマイクのパワーアップシーケンスに50ms程度必要

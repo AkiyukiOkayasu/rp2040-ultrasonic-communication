@@ -292,9 +292,9 @@ fn main() -> ! {
                 if let Some(magnitude) = g.process_sample(&input) {
                     ultrasonic_detected[i] = magnitude > ultrasonic_threshold;
 
-                    // if i == 0 {
-                    //     info!("{} dB", gain_to_decibel(&magnitude));
-                    // }
+                    if i == 0 {
+                        info!("{} dB", gain_to_decibel(&magnitude));
+                    }
 
                     if i == GOERTZEL_NUM_TARGET_FREQUENCYS - 1 {
                         if ultrasonic_detected[0]
@@ -318,11 +318,11 @@ fn main() -> ! {
                             && ultrasonic_detected[2]
                             && ultrasonic_detected[3]
                         {
-                            // info!("impulse");
+                            info!("impulse");
                             user_led1_pin.set_low().unwrap();
                             user_led2_pin.set_low().unwrap();
                         } else {
-                            // info!("not detected");
+                            info!("not detected");
                             user_led1_pin.set_low().unwrap();
                             user_led2_pin.set_low().unwrap();
                         }

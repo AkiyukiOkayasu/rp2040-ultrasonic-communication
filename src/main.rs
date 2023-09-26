@@ -90,8 +90,8 @@ fn main() -> ! {
 
     let ultrasonic_threshold = decibel_to_gain(&-70.0f32); //超音波の閾値
     info!("ultrasonic_threshold: {=f32}", ultrasonic_threshold);
-    let mut ultrasonic_detected: [bool; GOERTZEL_NUM_TARGET_FREQUENCYS] =
-        [false; GOERTZEL_NUM_TARGET_FREQUENCYS];
+    let mut ultrasonic_amplitude: [f32; GOERTZEL_NUM_TARGET_FREQUENCYS] =
+        [0.0f32; GOERTZEL_NUM_TARGET_FREQUENCYS];
 
     let mut pac = pac::Peripherals::take().unwrap();
     let core = pac::CorePeripherals::take().unwrap();
@@ -291,38 +291,50 @@ fn main() -> ! {
             let input = sample as f32 / i32::MAX as f32; //[-1.0, 1.0]
             for (i, g) in goertzel.iter_mut().enumerate() {
                 if let Some(magnitude) = g.process_sample(&input) {
-                    ultrasonic_detected[i] = magnitude > ultrasonic_threshold;
+                    ultrasonic_amplitude[i] = magnitude;
 
                     if i == 0 {
                         info!("{} dB", gain_to_decibel(&magnitude));
                     }
 
                     if i == GOERTZEL_NUM_TARGET_FREQUENCYS - 1 {
-                        if ultrasonic_detected[0]
-                            && ultrasonic_detected[1]
-                            && ultrasonic_detected[2]
-                            && !ultrasonic_detected[3]
+                        // 常時鳴っている超音波の検出
+                        if (ultrasonic_amplitude[0] > ultrasonic_threshold)
+                            && (ultrasonic_amplitude[1] > ultrasonic_threshold)
                         {
-                            // info!("case 1");
-                            user_led1_pin.set_high().unwrap();
-                            user_led2_pin.set_low().unwrap();
-                        } else if ultrasonic_detected[0]
-                            && ultrasonic_detected[1]
-                            && !ultrasonic_detected[2]
-                            && ultrasonic_detected[3]
-                        {
-                            // info!("case 2");
-                            user_led1_pin.set_low().unwrap();
-                            user_led2_pin.set_high().unwrap();
-                        } else if ultrasonic_detected[0]
-                            && ultrasonic_detected[1]
-                            && ultrasonic_detected[2]
-                            && ultrasonic_detected[3]
-                        {
-                            info!("impulse");
-                            user_led1_pin.set_high().unwrap();
-                            user_led2_pin.set_high().unwrap();
+                            if (ultrasonic_amplitude[2] > ultrasonic_threshold)
+                                && (ultrasonic_amplitude[3] > ultrasonic_threshold)
+                            {
+                                // ケース1の周波数とケース2の周波数がどちらも検出された場合は、振幅が大きい方を優先する
+                                if ultrasonic_amplitude[2] > ultrasonic_amplitude[3] {
+                                    info!("case1_priority");
+                                    user_led1_pin.set_high().unwrap();
+                                    user_led2_pin.set_low().unwrap();
+                                } else {
+                                    info!("case2_priority");
+                                    user_led1_pin.set_low().unwrap();
+                                    user_led1_pin.set_high().unwrap();
+                                }
+                            } else if (ultrasonic_amplitude[2] > ultrasonic_threshold)
+                                && (ultrasonic_amplitude[3] < ultrasonic_threshold)
+                            {
+                                info!("case1");
+                                user_led1_pin.set_high().unwrap();
+                                user_led2_pin.set_low().unwrap();
+                            } else if (ultrasonic_amplitude[2] < ultrasonic_threshold)
+                                && (ultrasonic_amplitude[3] > ultrasonic_threshold)
+                            {
+                                info!("case2");
+                                user_led1_pin.set_low().unwrap();
+                                user_led2_pin.set_high().unwrap();
+                            } else {
+                                //常時鳴っている周波数のみが検出された場合
+                                info!("insufficient detection");
+                                user_led1_pin.set_low().unwrap();
+                                user_led2_pin.set_low().unwrap();
+                            }
                         } else {
+                            //超音波が全く検出されなかった場合
                             info!("not detected");
                             user_led1_pin.set_low().unwrap();
                             user_led2_pin.set_low().unwrap();

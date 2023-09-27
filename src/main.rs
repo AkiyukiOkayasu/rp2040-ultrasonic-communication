@@ -76,7 +76,7 @@ const GOERTZEL_BLOCK_SIZE: u32 = 19200;
 
 const GOERTZEL_NUM_TARGET_FREQUENCYS: usize = 4;
 const GOERTZEL_TARGET_FREQUENCYS: [f32; GOERTZEL_NUM_TARGET_FREQUENCYS] = [
-    24000f32, 24100f32, 24200f32, 26000f32, //30000f32, //30375f32, 30750f32, 31125f32,
+    22510f32, 22590f32, 23000f32, 23700f32, //30000f32, //30375f32, 30750f32, 31125f32,
 ];
 
 #[entry]
@@ -313,7 +313,7 @@ fn main() -> ! {
                                 } else {
                                     info!("case2_priority");
                                     user_led1_pin.set_low().unwrap();
-                                    user_led1_pin.set_high().unwrap();
+                                    user_led2_pin.set_high().unwrap();
                                 }
                             } else if (ultrasonic_amplitude[2] > ultrasonic_threshold)
                                 && (ultrasonic_amplitude[3] < ultrasonic_threshold)

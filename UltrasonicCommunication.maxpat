@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 911.0, 462.0, 634.0, 661.0 ],
+		"rect" : [ 609.0, 257.0, 634.0, 661.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -124,7 +124,7 @@
 					"patching_rect" : [ 396.0, 60.0, 132.0, 96.0 ],
 					"saved_attribute_attributes" : 					{
 						"valueof" : 						{
-							"parameter_enum" : [ "24200", "26000" ],
+							"parameter_enum" : [ "23000", "23700" ],
 							"parameter_longname" : "live.tab",
 							"parameter_mmax" : 1,
 							"parameter_shortname" : "live.tab",
@@ -210,7 +210,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 204.0, 72.0, 45.0, 22.0 ],
-					"text" : "24100"
+					"text" : "22590"
 				}
 
 			}
@@ -222,7 +222,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 12.0, 72.0, 45.0, 22.0 ],
-					"text" : "24000"
+					"text" : "22510"
 				}
 
 			}

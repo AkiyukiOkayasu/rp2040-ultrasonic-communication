@@ -81,6 +81,11 @@ const GOERTZEL_TARGET_FREQUENCYS: [f32; GOERTZEL_NUM_TARGET_FREQUENCYS] = [
 
 #[entry]
 fn main() -> ! {
+    info!(
+        "{=str} v{=str}",
+        env!("CARGO_PKG_NAME"),
+        env!("CARGO_PKG_VERSION")
+    );
     info!("BUFFER_SIZE: {=usize}", BUFFER_SIZE);
     info!("SAMPLE_RATE: {=u32}", SAMPLE_RATE.raw());
     info!("CIC_DECIMATION_FACTOR: {=usize}", CIC_DECIMATION_FACTOR);

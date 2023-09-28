@@ -891,8 +891,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "rp2040-project-template"
-version = "0.1.0"
+name = "rp2040-ultrasonic-communication"
+version = "0.4.0"
 dependencies = [
  "cic-fixed",
  "cortex-m",

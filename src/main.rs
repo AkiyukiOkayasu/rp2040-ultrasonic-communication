@@ -81,12 +81,9 @@ const GOERTZEL_TARGET_FREQUENCYS: [f32; GOERTZEL_NUM_TARGET_FREQUENCYS] = [
 
 #[entry]
 fn main() -> ! {
-    info!("Program start");
     info!("BUFFER_SIZE: {=usize}", BUFFER_SIZE);
     info!("SAMPLE_RATE: {=u32}", SAMPLE_RATE.raw());
-    info!("PDM_CLOCK_RATE: {=u32}", PDM_CLOCK_HZ.raw());
     info!("CIC_DECIMATION_FACTOR: {=usize}", CIC_DECIMATION_FACTOR);
-    info!("PDM_PIO_CLOCKDIV_INT: {=u16}", PDM_PIO_CLOCKDIV_INT);
 
     let ultrasonic_threshold = decibel_to_gain(&-70.0f32); //超音波の閾値
     info!("ultrasonic_threshold: {=f32}", ultrasonic_threshold);

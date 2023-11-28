@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 34.0, 87.0, 1115.0, 724.0 ],
+		"rect" : [ 424.0, 239.0, 1115.0, 724.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -50,7 +50,7 @@
 					"mode" : 1,
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 156.0, 492.0, 912.0, 36.0 ],
+					"patching_rect" : [ 156.0, 516.0, 912.0, 48.0 ],
 					"proportion" : 0.5
 				}
 
@@ -120,7 +120,7 @@
 			}
 , 			{
 				"box" : 				{
-					"domain" : [ 0.0, 24000.0 ],
+					"domain" : [ 0.0, 30000.0 ],
 					"id" : "obj-32",
 					"maxclass" : "spectroscope~",
 					"monochrome" : 0,

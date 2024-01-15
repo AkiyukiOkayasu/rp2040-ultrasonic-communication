@@ -18,15 +18,19 @@ defmt-rtt = "0.4"
 panic-probe = { version = "0.3", features = ["print-defmt"] }
 
 # We're using a Pico by default on this template
-rp-pico = { version = "0.8.0", default-features = false, features = ["rt", "critical-section-impl", "rom-func-cache"] }
+rp-pico = { version = "0.8.0", default-features = false, features = [
+    "rt",
+    "critical-section-impl",
+    "rom-func-cache",
+] }
 fugit = "0.3.7"
 fixed = "1.24.0"
 pio = "0.2.1"
 pio-proc = "0.2.2"
-heapless = "0.7.16"
+heapless = "0.8.0"
 cic-fixed = "0.5.1"
 goertzel_algorithm = "0.1.0"
-libm = "0.2.7"
+libm = "0.2.8"
 
 # but you can use any BSP. Uncomment this to use the pro_micro_rp2040 BSP instead
 # sparkfun-pro-micro-rp2040 = "0.3"

@@ -6,7 +6,7 @@ license = "MIT OR Apache-2.0"
 authors = ["Akiyuki Okayasu <akiyuki.okayasu@gmail.com>"]
 repository = "https://github.com/AkiyukiOkayasu/rp2040-ultrasonic-communication"
 readme = "README.md"
-rust-version = "1.72.0"
+rust-version = "1.76.0"
 
 [dependencies]
 cortex-m = "0.7"

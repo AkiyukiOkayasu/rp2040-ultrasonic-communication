@@ -23,12 +23,12 @@ use pio_proc::pio_file;
 // Provide an alias for our BSP so we can switch targets quickly.
 // Uncomment the BSP you included in Cargo.toml, the rest of the code does not need to change.
 use rp_pico as bsp;
-// use sparkfun_pro_micro_rp2040 as bsp;
 
 use bsp::hal::{
     clocks::{Clock, ClockSource, ClocksManager, InitError},
     dma::{double_buffer, DMAExt},
     gpio::FunctionPio0,
+    multicore::{Multicore, Stack},
     pac,
     pio::{Buffers, PIOBuilder, PIOExt, PinDir, ShiftDirection},
     pll::{common_configs::PLL_USB_48MHZ, setup_pll_blocking},
@@ -79,6 +79,51 @@ const GOERTZEL_TARGET_FREQUENCYS: [f32; GOERTZEL_NUM_TARGET_FREQUENCYS] = [
     22510f32, 22590f32, 23000f32, 23700f32, //30000f32, //30375f32, 30750f32, 31125f32,
 ];
 
+enum DetectedUltrasonic {
+    Case1,
+    Case2,
+}
+
+impl TryFrom<u32> for DetectedUltrasonic {
+    type Error = ();
+
+    fn try_from(value: u32) -> Result<Self, Self::Error> {
+        match value {
+            0 => Ok(DetectedUltrasonic::Case1),
+            1 => Ok(DetectedUltrasonic::Case2),
+            _ => Err(()),
+        }
+    }
+}
+
+// Multicore
+static mut CORE1_STACK: Stack<4096> = Stack::new();
+
+/// Core1のタスク。Core0の起動後に実行される。
+fn core1_task() {
+    let pac = unsafe { pac::Peripherals::steal() };
+    let core = unsafe { pac::CorePeripherals::steal() };
+
+    let mut sio = Sio::new(pac.SIO);
+    let clocks = ClocksManager::new(pac.CLOCKS);
+    let mut delay = cortex_m::delay::Delay::new(core.SYST, clocks.system_clock.freq().to_Hz());
+
+    loop {
+        if sio.fifo.is_read_ready() {
+            let detected = DetectedUltrasonic::try_from(sio.fifo.read().unwrap()).unwrap();
+            match detected {
+                DetectedUltrasonic::Case1 => {
+                    info!("Core1: Case1");
+                }
+                DetectedUltrasonic::Case2 => {
+                    info!("Core1: Case2");
+                }
+            }
+        }
+        delay.delay_ms(100);
+    }
+}
+
 #[entry]
 fn main() -> ! {
     info!(
@@ -98,7 +143,7 @@ fn main() -> ! {
     let mut pac = pac::Peripherals::take().unwrap();
     let core = pac::CorePeripherals::take().unwrap();
     let mut watchdog = Watchdog::new(pac.WATCHDOG);
-    let sio = Sio::new(pac.SIO);
+    let mut sio = Sio::new(pac.SIO);
 
     //=============================VREG===============================
     // Core電圧(vreg)を取得
@@ -253,6 +298,15 @@ fn main() -> ! {
         (pdm_clock_output_pin.id().num, PinDir::Output),
     ]);
 
+    //=============================MULTICORE===============================
+    let mut mc = Multicore::new(&mut pac.PSM, &mut pac.PPB, &mut sio.fifo);
+    let cores = mc.cores();
+    let core1 = &mut cores[1];
+    // core1起動
+    core1
+        .spawn(unsafe { &mut CORE1_STACK.mem }, core1_task)
+        .unwrap();
+
     //=============================DMA===============================
     let dma_channels = pac.DMA.split(&mut pac.RESETS);
     // PDM用DMA設定
@@ -310,10 +364,16 @@ fn main() -> ! {
                                 // ケース1の周波数とケース2の周波数がどちらも検出された場合は、振幅が大きい方を優先する
                                 if ultrasonic_amplitude[2] > ultrasonic_amplitude[3] {
                                     info!("case1_priority");
+                                    if sio.fifo.is_write_ready() {
+                                        sio.fifo.write(DetectedUltrasonic::Case1 as u32);
+                                    }
                                     user_led1_pin.set_high().unwrap();
                                     user_led2_pin.set_low().unwrap();
                                 } else {
                                     info!("case2_priority");
+                                    if sio.fifo.is_write_ready() {
+                                        sio.fifo.write(DetectedUltrasonic::Case2 as u32);
+                                    }
                                     user_led1_pin.set_low().unwrap();
                                     user_led2_pin.set_high().unwrap();
                                 }
@@ -321,12 +381,18 @@ fn main() -> ! {
                                 && (ultrasonic_amplitude[3] < ultrasonic_threshold)
                             {
                                 info!("case1");
+                                if sio.fifo.is_write_ready() {
+                                    sio.fifo.write(DetectedUltrasonic::Case1 as u32);
+                                }
                                 user_led1_pin.set_high().unwrap();
                                 user_led2_pin.set_low().unwrap();
                             } else if (ultrasonic_amplitude[2] < ultrasonic_threshold)
                                 && (ultrasonic_amplitude[3] > ultrasonic_threshold)
                             {
                                 info!("case2");
+                                if sio.fifo.is_write_ready() {
+                                    sio.fifo.write(DetectedUltrasonic::Case2 as u32);
+                                }
                                 user_led1_pin.set_low().unwrap();
                                 user_led2_pin.set_high().unwrap();
                             } else {

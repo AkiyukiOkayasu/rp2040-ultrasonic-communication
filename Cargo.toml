@@ -24,7 +24,7 @@ rp-pico = { version = "0.8.0", default-features = false, features = [
     "rom-func-cache",
 ] }
 fugit = "0.3.7"
-fixed = "1.24.0"
+fixed = "1.25.1"
 pio = "0.2.1"
 pio-proc = "0.2.2"
 heapless = "0.8.0"

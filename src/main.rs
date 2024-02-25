@@ -8,11 +8,14 @@
 pub static BOOT2_FIRMWARE: [u8; 256] = rp2040_boot2::BOOT_LOADER_W25Q080;
 
 use bsp::entry;
+use bsp::hal::gpio::PinState;
+use bsp::hal::pac::vreg_and_chip_reset::vreg::VSEL_A;
+use bsp::hal::vreg;
 use cic_fixed::CicDecimationFilter;
 use cortex_m::singleton;
 use defmt::*;
 use defmt_rtt as _;
-use embedded_hal::digital::v2::{OutputPin, PinState};
+use embedded_hal::digital::v2::OutputPin;
 use fixed::types::I1F31;
 use fugit::HertzU32;
 use goertzel_algorithm::OptimizedGoertzel;
@@ -38,7 +41,6 @@ use bsp::hal::{
 };
 
 mod rp2040_pll_settings_for_48khz_audio;
-mod vreg;
 
 /// External high-speed crystal on the pico board is 12Mhz
 const EXTERNAL_XTAL_FREQ_HZ: HertzU32 = HertzU32::from_raw(12_000_000u32);
@@ -147,12 +149,12 @@ fn main() -> ! {
 
     //=============================VREG===============================
     // Core電圧(vreg)を取得
-    let vreg_voltage = vreg::vreg_get_voltage(&mut pac.VREG_AND_CHIP_RESET);
+    let vreg_voltage = vreg::vreg_get_voltage(&mut pac.VREG_AND_CHIP_RESET).unwrap() as u8;
     info!("VREG voltage: {=u8:b}", vreg_voltage);
     // Core電圧(vreg)を1.25Vに設定
-    vreg::vreg_set_voltage(&mut pac.VREG_AND_CHIP_RESET, vreg::VregVoltage::Voltage1_25);
+    vreg::vreg_set_voltage(&mut pac.VREG_AND_CHIP_RESET, VSEL_A::VOLTAGE1_25);
     // Core電圧(vreg)を再度取得して確認
-    let vreg_voltage = vreg::vreg_get_voltage(&mut pac.VREG_AND_CHIP_RESET);
+    let vreg_voltage = vreg::vreg_get_voltage(&mut pac.VREG_AND_CHIP_RESET).unwrap() as u8;
     info!("VREG voltage: {=u8:b}", vreg_voltage);
 
     //=============================CLOCK===============================
@@ -282,7 +284,7 @@ fn main() -> ! {
     let pio_pdm = pio.install(&pio_pdm).unwrap();
 
     // PDM用PIOの設定
-    let (mut sm2, rx2, _tx1) = PIOBuilder::from_program(pio_pdm)
+    let (mut sm2, rx2, _tx1) = PIOBuilder::from_installed_program(pio_pdm)
         .in_pin_base(pdm_input_pin.id().num)
         .side_set_pin_base(pdm_clock_output_pin.id().num)
         .jmp_pin(pdm_pio_jump_pin.id().num) // PIO起動直後はJUMP PINをHighにしてPDM clockを1.536MHzにし、1秒くらい経ったらLowにして3.072MHzにする

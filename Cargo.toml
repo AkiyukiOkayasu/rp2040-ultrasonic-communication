@@ -8,6 +8,9 @@ repository = "https://github.com/AkiyukiOkayasu/rp2040-ultrasonic-communication"
 readme = "README.md"
 rust-version = "1.76.0"
 
+[patch.crates-io]
+rp2040-hal = { git = "https://github.com/AkiyukiOkayasu/rp-hal.git", rev = "92f0f6e90fb350621cc3bacf3cbdef22e30d2437" }
+
 [dependencies]
 cortex-m = "0.7"
 cortex-m-rt = "0.7"

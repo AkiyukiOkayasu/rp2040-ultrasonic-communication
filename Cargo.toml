@@ -16,7 +16,7 @@ defmt = "0.3"
 defmt-rtt = "0.4"
 panic-probe = { version = "0.3", features = ["print-defmt"] }
 fugit = "0.3.7"
-fixed = "1.25.1"
+fixed = "1.26.0"
 pio = "0.2.1"
 pio-proc = "0.2.2"
 heapless = "0.8.0"

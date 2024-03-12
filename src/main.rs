@@ -26,7 +26,7 @@ use rp2040_hal::{
     clocks::{Clock, ClockSource, ClocksManager, InitError},
     dma::{double_buffer, DMAExt},
     entry,
-    gpio::{FunctionPio0, PinState},
+    gpio::{FunctionPio0, PinState, Pins},
     multicore::{Multicore, Stack},
     pac,
     pac::vreg_and_chip_reset::vreg::VSEL_A,
@@ -249,7 +249,7 @@ fn main() -> ! {
     let mut delay = cortex_m::delay::Delay::new(core.SYST, clocks.system_clock.freq().to_Hz());
 
     //=============================GPIO===============================
-    let pins = rp2040_hal::gpio::Pins::new(
+    let pins = Pins::new(
         pac.IO_BANK0,
         pac.PADS_BANK0,
         sio.gpio_bank0,

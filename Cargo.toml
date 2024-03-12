@@ -35,11 +35,11 @@ cic-fixed = "0.5.1"
 goertzel_algorithm = "0.1.0"
 libm = "0.2.8"
 
-# but you can use any BSP. Uncomment this to use the pro_micro_rp2040 BSP instead
-# sparkfun-pro-micro-rp2040 = "0.3"
-
 # If you're not going to use a Board Support Package you'll need these:
 # rp2040-hal = { version="0.8", features=["rt", "critical-section-impl"] }
+# v0.2.1はQSPI Flashのアクセスの分周が4に設定されているので、オーバークロックする場合は都合がよい。
+# v0.3.0以降は分周が2に設定されているのでアップデートするとオーバークロックができなくなるはず。
+# C/C++ SDKのデフォルト分周は2。
 rp2040-boot2 = "0.2.1"
 
 # cargo build/run

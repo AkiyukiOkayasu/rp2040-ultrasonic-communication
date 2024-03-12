@@ -147,12 +147,12 @@ fn main() -> ! {
 
     //=============================VREG===============================
     // Core電圧(vreg)を取得
-    let vreg_voltage = vreg::get_voltage(&mut pac.VREG_AND_CHIP_RESET).unwrap() as u8;
+    let vreg_voltage = vreg::get_voltage(&pac.VREG_AND_CHIP_RESET).unwrap() as u8;
     info!("VREG voltage: {=u8:b}", vreg_voltage);
     // Core電圧(vreg)を1.25Vに設定
     vreg::set_voltage(&mut pac.VREG_AND_CHIP_RESET, VSEL_A::VOLTAGE1_25);
     // Core電圧(vreg)を再度取得して確認
-    let vreg_voltage = vreg::get_voltage(&mut pac.VREG_AND_CHIP_RESET).unwrap() as u8;
+    let vreg_voltage = vreg::get_voltage(&pac.VREG_AND_CHIP_RESET).unwrap() as u8;
     info!("VREG voltage: {=u8:b}", vreg_voltage);
 
     //=============================CLOCK===============================

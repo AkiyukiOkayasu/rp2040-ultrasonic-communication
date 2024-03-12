@@ -11,7 +11,7 @@ use cic_fixed::CicDecimationFilter;
 use cortex_m::singleton;
 use defmt::*;
 use defmt_rtt as _;
-use embedded_hal::digital::v2::OutputPin;
+use embedded_hal::digital::OutputPin;
 use fixed::types::I1F31;
 use fugit::HertzU32;
 use goertzel_algorithm::OptimizedGoertzel;

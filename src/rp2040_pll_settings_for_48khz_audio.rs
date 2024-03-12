@@ -4,7 +4,7 @@
 //! I2SのPIOは15.36MHz (48kHz * 64 * 5)で動かすので、システムクロックはその整数倍にする。
 
 use fugit::HertzU32;
-use rp_pico::hal::pll::PLLConfig;
+use rp2040_hal::pll::PLLConfig;
 
 /// RP2040を76.8MHzで動作させるためのPLL設定
 /// Cogはこの設定で動かしている（低消費電力目的）

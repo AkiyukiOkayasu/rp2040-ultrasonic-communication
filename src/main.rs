@@ -7,10 +7,6 @@
 #[used]
 pub static BOOT2_FIRMWARE: [u8; 256] = rp2040_boot2::BOOT_LOADER_W25Q080;
 
-use bsp::entry;
-use bsp::hal::gpio::PinState;
-use bsp::hal::pac::vreg_and_chip_reset::vreg::VSEL_A;
-use bsp::hal::vreg;
 use cic_fixed::CicDecimationFilter;
 use cortex_m::singleton;
 use defmt::*;
@@ -25,17 +21,19 @@ use pio_proc::pio_file;
 
 // Provide an alias for our BSP so we can switch targets quickly.
 // Uncomment the BSP you included in Cargo.toml, the rest of the code does not need to change.
-use rp_pico as bsp;
 
-use bsp::hal::{
+use rp2040_hal::{
     clocks::{Clock, ClockSource, ClocksManager, InitError},
     dma::{double_buffer, DMAExt},
-    gpio::FunctionPio0,
+    entry,
+    gpio::{FunctionPio0, PinState},
     multicore::{Multicore, Stack},
     pac,
+    pac::vreg_and_chip_reset::vreg::VSEL_A,
     pio::{Buffers, PIOBuilder, PIOExt, PinDir, ShiftDirection},
     pll::{common_configs::PLL_USB_48MHZ, setup_pll_blocking},
     sio::Sio,
+    vreg,
     watchdog::Watchdog,
     xosc::setup_xosc_blocking,
 };
@@ -149,12 +147,12 @@ fn main() -> ! {
 
     //=============================VREG===============================
     // Core電圧(vreg)を取得
-    let vreg_voltage = vreg::vreg_get_voltage(&mut pac.VREG_AND_CHIP_RESET).unwrap() as u8;
+    let vreg_voltage = vreg::get_voltage(&mut pac.VREG_AND_CHIP_RESET).unwrap() as u8;
     info!("VREG voltage: {=u8:b}", vreg_voltage);
     // Core電圧(vreg)を1.25Vに設定
-    vreg::vreg_set_voltage(&mut pac.VREG_AND_CHIP_RESET, VSEL_A::VOLTAGE1_25);
+    vreg::set_voltage(&mut pac.VREG_AND_CHIP_RESET, VSEL_A::VOLTAGE1_25);
     // Core電圧(vreg)を再度取得して確認
-    let vreg_voltage = vreg::vreg_get_voltage(&mut pac.VREG_AND_CHIP_RESET).unwrap() as u8;
+    let vreg_voltage = vreg::get_voltage(&mut pac.VREG_AND_CHIP_RESET).unwrap() as u8;
     info!("VREG voltage: {=u8:b}", vreg_voltage);
 
     //=============================CLOCK===============================
@@ -251,7 +249,7 @@ fn main() -> ! {
     let mut delay = cortex_m::delay::Delay::new(core.SYST, clocks.system_clock.freq().to_Hz());
 
     //=============================GPIO===============================
-    let pins = bsp::hal::gpio::Pins::new(
+    let pins = rp2040_hal::gpio::Pins::new(
         pac.IO_BANK0,
         pac.PADS_BANK0,
         sio.gpio_bank0,

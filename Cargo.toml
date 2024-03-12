@@ -8,24 +8,13 @@ repository = "https://github.com/AkiyukiOkayasu/rp2040-ultrasonic-communication"
 readme = "README.md"
 rust-version = "1.76.0"
 
-[patch.crates-io]
-rp2040-hal = { git = "https://github.com/AkiyukiOkayasu/rp-hal.git", rev = "92f0f6e90fb350621cc3bacf3cbdef22e30d2437" }
-
 [dependencies]
 cortex-m = "0.7"
 cortex-m-rt = "0.7"
 embedded-hal = { version = "0.2.7", features = ["unproven"] }
-
 defmt = "0.3"
 defmt-rtt = "0.4"
 panic-probe = { version = "0.3", features = ["print-defmt"] }
-
-# We're using a Pico by default on this template
-rp-pico = { version = "0.8.0", default-features = false, features = [
-    "rt",
-    "critical-section-impl",
-    "rom-func-cache",
-] }
 fugit = "0.3.7"
 fixed = "1.25.1"
 pio = "0.2.1"
@@ -36,7 +25,12 @@ goertzel_algorithm = "0.1.0"
 libm = "0.2.8"
 
 # If you're not going to use a Board Support Package you'll need these:
-# rp2040-hal = { version="0.8", features=["rt", "critical-section-impl"] }
+rp2040-hal = { version = "0.10.0", features = [
+    "rt",
+    "critical-section-impl",
+    "rom-func-cache",
+] }
+
 # v0.2.1はQSPI Flashのアクセスの分周が4に設定されているので、オーバークロックする場合は都合がよい。
 # v0.3.0以降は分周が2に設定されているのでアップデートするとオーバークロックができなくなるはず。
 # C/C++ SDKのデフォルト分周は2。
